@@ -1,41 +1,82 @@
 <template>
-  <el-form ref="formRef" v-loading="loading" :model="form" :rules="rules" label-width="auto" label-position="top">
+  <el-form
+    ref="formRef"
+    v-loading="loading"
+    :model="form"
+    :rules="rules"
+    label-width="auto"
+    label-position="top"
+  >
     <el-form-item required label="Kegiatan" prop="activity.activityId">
-      <el-select v-model="form.activity.activityId" placeholder="Pilih Nama Kegiatan" clearable filterable>
-        <el-option v-for="activity in activities" :key="activity._id" :label="activity.name" :value="activity._id">
+      <el-select
+        v-model="form.activity.activityId"
+        placeholder="Pilih Nama Kegiatan"
+        clearable
+        filterable
+      >
+        <el-option
+          v-for="activity in activities"
+          :key="activity._id"
+          :label="activity.name"
+          :value="activity._id"
+        >
           <span style="float: left">{{ activity.name }}</span>
-          <span style="
+          <span
+            style="
               float: right;
               color: var(--el-text-color-secondary);
               font-size: 13px;
-            ">
+            "
+          >
             {{ activity.code }}
           </span>
         </el-option>
       </el-select>
     </el-form-item>
     <el-form-item required label="Periode" prop="contract.period">
-      <el-select v-model="form.contract.period" placeholder="Pilih Periode SPK" clearable filterable>
-        <el-option v-for="item in periods" :key="item.value" :label="item.text" :value="item.value" />
+      <el-select
+        v-model="form.contract.period"
+        placeholder="Pilih Periode SPK"
+        clearable
+        filterable
+      >
+        <el-option
+          v-for="item in periods"
+          :key="item.value"
+          :label="item.text"
+          :value="item.value"
+        />
       </el-select>
     </el-form-item>
 
     <el-form-item required label="Tanggal Mulai" prop="activity.startDate">
       <el-col>
-        <el-date-picker v-model="form.activity.startDate" type="date" placeholder="Pilih Tanggal Mulai"
-          :default-value="formatPeriodDate(form.contract.period)" />
+        <el-date-picker
+          v-model="form.activity.startDate"
+          type="date"
+          placeholder="Pilih Tanggal Mulai"
+          :default-value="formatPeriodDate(form.contract.period)"
+        />
       </el-col>
     </el-form-item>
     <el-form-item required label="Tanggal Selesai" prop="activity.endDate">
       <el-col>
-        <el-date-picker v-model="form.activity.endDate" type="date" placeholder="Pilih Tanggal Selesai"
-          :default-value="formatPeriodDate(form.contract.period)" />
+        <el-date-picker
+          v-model="form.activity.endDate"
+          type="date"
+          placeholder="Pilih Tanggal Selesai"
+          :default-value="formatPeriodDate(form.contract.period)"
+        />
       </el-col>
     </el-form-item>
 
     <el-form-item required label="Rate" prop="activity.rate">
-      <el-input :formatter="formatNumber" :parser="formatParserNumber" v-model="form.activity.rate"
-        placeholder="Masukkan Rate" />
+      <el-input
+        :formatter="formatNumber"
+        :parser="formatParserNumber"
+        v-model="form.activity.rate"
+        placeholder="Masukkan Rate"
+      />
     </el-form-item>
 
     <el-card shadow="never">
@@ -45,21 +86,36 @@
         </div>
       </template>
       <div style="display: flex; flex-wrap: wrap; gap: 20px">
-        <FormContractPartnerItem v-for="(partner, index) in form.partners" :key="index" :partners="partners"
-          :index="index" :partner="partner" @remove="removePartner(index)" />
+        <FormContractPartnerItem
+          v-for="(partner, index) in form.partners"
+          :key="index"
+          :partners="partners"
+          :index="index"
+          :partner="partner"
+          @remove="removePartner(index)"
+        />
       </div>
 
       <template #footer>
-        <div style="gap:10px; display: flex;">
+        <div style="gap: 10px; display: flex">
           <el-button type="primary" @click="addPartner">Tambah Mitra</el-button>
-          <el-upload ref="fileInput" :limit="1" :show-file-list="false" action="#" accept="text/csv"
-            :auto-upload="false" :on-change="handleFileChange">
-            <el-button>
-              Impor Mitra
-            </el-button>
+          <el-upload
+            ref="fileInput"
+            :limit="1"
+            :show-file-list="false"
+            action="#"
+            accept="text/csv"
+            :auto-upload="false"
+            :on-change="handleFileChange"
+          >
+            <el-button> Impor Mitra </el-button>
           </el-upload>
-          <el-button type="success" @click="downloadMasterPartner()">Unduh Master Data Mitra</el-button>
-          <el-button @click="downloadTemplateImportPartner()">Template Impor Mitra</el-button>
+          <el-button type="success" @click="downloadMasterPartner()"
+            >Unduh Master Data Mitra</el-button
+          >
+          <el-button @click="downloadTemplateImportPartner()"
+            >Template Impor Mitra</el-button
+          >
         </div>
       </template>
     </el-card>
@@ -74,9 +130,20 @@
 import Papa from "papaparse";
 import { ref, reactive, onMounted, watch } from "vue";
 import FormContractPartnerItem from "@/components/contract/FormContractPartnerItem.vue";
-import { formatDateOriginal, formatPeriodDate, generatePeriods } from "@/utils/date";
+import {
+  formatDateOriginal,
+  formatPeriodDate,
+  generatePeriods,
+} from "@/utils/date";
 import { createContract, downloadTemplatePartner } from "@/api/contractApi";
-import { ElNotification, type FormInstance, type FormRules, type UploadFile, type UploadFiles, type UploadInstance } from "element-plus";
+import {
+  ElNotification,
+  type FormInstance,
+  type FormRules,
+  type UploadFile,
+  type UploadFiles,
+  type UploadInstance,
+} from "element-plus";
 import { getActivities } from "@/api/activityApi";
 import { getPartners, downloadPartners } from "@/api/partnerApi";
 import { formatNumber, formatParserNumber } from "@/utils/currency";
@@ -180,8 +247,9 @@ const submit = async (formEl: FormInstance | undefined) => {
       await showNotification("Success", message, "success");
 
       for await (const contract of data) {
-        
-        const hasSpecial = contract.activities.some(activity => activity.isSpecial);
+        const hasSpecial = contract.activities.some(
+          (activity: any) => activity.isSpecial
+        );
 
         if (contract.isExceeded && !hasSpecial) {
           ElNotification({
@@ -213,19 +281,22 @@ const addPartner = () => {
   });
 };
 
-const handleFileChange = async (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
+const handleFileChange = async (
+  uploadFile: UploadFile,
+  uploadFiles: UploadFiles
+) => {
   const raw = await uploadFile.raw?.text();
 
-  if (!raw) return
+  if (!raw) return;
 
   var result = Papa.parse(raw, {
-    header: true
+    header: true,
   });
 
   result.data.forEach((rawPartner: any) => {
-    const partner = partners.value.find(item => item.nik == rawPartner.nik);
+    const partner = partners.value.find((item) => item.nik == rawPartner.nik);
 
-    if (!partner) return
+    if (!partner) return;
 
     form.partners.push({
       partnerId: partner._id,
@@ -233,30 +304,34 @@ const handleFileChange = async (uploadFile: UploadFile, uploadFiles: UploadFiles
     });
   });
 
-  fileInput.value?.clearFiles()
-}
+  fileInput.value?.clearFiles();
+};
 
 const removePartner = (index: number) => {
   form.partners.splice(index, 1);
 };
 
 const downloadMasterPartner = () => {
-  downloadPartners()
-}
+  downloadPartners();
+};
 
 const downloadTemplateImportPartner = () => {
-  downloadTemplatePartner()
-}
+  downloadTemplatePartner();
+};
 
 const periods = generatePeriods();
 
-const showNotification = async (title: string, message: string, type: string) => {
+const showNotification = async (
+  title: string,
+  message: string,
+  type: string
+) => {
   ElNotification({
     title: title,
     message: message,
     type: type,
   } as any);
-}
+};
 
 onMounted(async () => {
   partners.value = await getPartners(route.query.year?.toString());

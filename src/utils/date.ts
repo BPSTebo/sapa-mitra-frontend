@@ -25,7 +25,7 @@ export const formatDateOriginal = (isoDateString: string): string => {
   return `${year}-${month}-${day} `;
 };
 export const generatePeriods = (
-  startYear: number = 2024
+  startYear: number = 2025
 ): { value: string; text: string }[] => {
   const periods = [];
   const currentYear = new Date().getFullYear();
@@ -40,7 +40,7 @@ export const generatePeriods = (
 };
 
 export const generateYear = (
-  startYear: number = 2024
+  startYear: number = 2025
 ): { value: string; text: string }[] => {
   const periods = [];
   const currentYear = new Date().getFullYear();

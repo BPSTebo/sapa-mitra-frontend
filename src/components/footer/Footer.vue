@@ -1,7 +1,9 @@
 <template>
   <div>
-    <el-text>© 2024. Made with ❤️ by BPS Kota Bontang. (Versi: {{ version }}, Mode: {{ mode }}, Build: {{ build
-      }})</el-text>
+    <el-text
+      >© 2024. (Versi: {{ version }}, Mode: {{ mode }}, Build:
+      {{ build }})</el-text
+    >
   </div>
 </template>
 

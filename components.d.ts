@@ -7,7 +7,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    ChangePassword: typeof import('./src/components/setting/ChangePassword.vue')['default']
     DialogFormEditActivity: typeof import('./src/components/activity/DialogFormEditActivity.vue')['default']
     DialogFormEditContract: typeof import('./src/components/contract/DialogFormEditContract.vue')['default']
     DialogFormEditContractActivity: typeof import('./src/components/contract/DialogFormEditContractActivity.vue')['default']

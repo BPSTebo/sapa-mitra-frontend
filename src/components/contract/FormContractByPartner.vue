@@ -1,22 +1,51 @@
 <template>
-  <el-form ref="formRef" v-loading="loading" :model="form" :rules="rules" label-width="auto" label-position="top">
+  <el-form
+    ref="formRef"
+    v-loading="loading"
+    :model="form"
+    :rules="rules"
+    label-width="auto"
+    label-position="top"
+  >
     <el-form-item required label="Mitra" prop="partner.partnerId">
-      <el-select v-model="form.partner.partnerId" placeholder="Pilih Nama Mitra" clearable filterable>
-        <el-option v-for="partner in partners" :key="partner._id" :label="partner.name" :value="partner._id">
+      <el-select
+        v-model="form.partner.partnerId"
+        placeholder="Pilih Nama Mitra"
+        clearable
+        filterable
+      >
+        <el-option
+          v-for="partner in partners"
+          :key="partner._id"
+          :label="partner.name"
+          :value="partner._id"
+        >
           <span style="float: left">{{ partner.name }}</span>
-          <span style="
+          <span
+            style="
               float: right;
               color: var(--el-text-color-secondary);
               font-size: 13px;
-            ">
+            "
+          >
             {{ partner.address }}
           </span>
         </el-option>
       </el-select>
     </el-form-item>
     <el-form-item required label="Periode" prop="contract.period">
-      <el-select v-model="form.contract.period" placeholder="Pilih Periode SPK" clearable filterable>
-        <el-option v-for="item in periods" :key="item.value" :label="item.text" :value="item.value" />
+      <el-select
+        v-model="form.contract.period"
+        placeholder="Pilih Periode SPK"
+        clearable
+        filterable
+      >
+        <el-option
+          v-for="item in periods"
+          :key="item.value"
+          :label="item.text"
+          :value="item.value"
+        />
       </el-select>
     </el-form-item>
 
@@ -27,11 +56,19 @@
         </div>
       </template>
       <div style="display: flex; flex-wrap: wrap; gap: 20px">
-        <FormContractActivityItem :activities="activities" v-for="(activity, index) in form.activities" :key="index"
-          :period="form.contract.period" :index="index" :activity="activity" @remove="removeActivity(index)" />
+        <FormContractActivityItem
+          :activities="activities"
+          v-for="(activity, index) in form.activities"
+          :key="index"
+          :period="form.contract.period"
+          :index="index"
+          :activity="activity"
+          @remove="removeActivity(index)"
+        />
       </div>
 
-      <template #footer><el-button @click="addActivity">Tambah Kegiatan</el-button>
+      <template #footer
+        ><el-button @click="addActivity">Tambah Kegiatan</el-button>
       </template>
     </el-card>
     <el-form-item required style="margin-top: 20px">
@@ -47,7 +84,11 @@ import { ref, reactive, onMounted, watch } from "vue";
 import FormContractActivityItem from "@/components/contract/FormContractActivityItem.vue";
 import { formatDateOriginal, generatePeriods } from "@/utils/date";
 import { createContract } from "@/api/contractApi";
-import { ElNotification, type FormInstance, type FormRules } from "element-plus";
+import {
+  ElNotification,
+  type FormInstance,
+  type FormRules,
+} from "element-plus";
 import { getActivities } from "@/api/activityApi";
 import { useRoute } from "vue-router";
 
@@ -126,9 +167,11 @@ const submit = async (formEl: FormInstance | undefined) => {
 
     try {
       const { data, message } = await createContract(payload);
-      await showNotification("Success", message, "success")
+      await showNotification("Success", message, "success");
 
-      const hasSpecial = data.activities.some(activity => activity.isSpecial);
+      const hasSpecial = data.activities.some(
+        (activity: any) => activity.isSpecial
+      );
 
       if (data.isExceeded && !hasSpecial) {
         ElNotification({
@@ -143,7 +186,7 @@ const submit = async (formEl: FormInstance | undefined) => {
       }
     } catch (e) {
       if (e instanceof Error) {
-        await showNotification("Error", e.message, "error")
+        await showNotification("Error", e.message, "error");
       }
     } finally {
       loading.value = false;
@@ -167,13 +210,17 @@ const removeActivity = (index: number) => {
 
 const periods = generatePeriods();
 
-const showNotification = async (title: string, message: string, type: string) => {
+const showNotification = async (
+  title: string,
+  message: string,
+  type: string
+) => {
   ElNotification({
     title: title,
     message: message,
     type: type,
   } as any);
-}
+};
 
 onMounted(async () => {
   partners.value = await getPartners(route.query.year?.toString());
@@ -181,5 +228,4 @@ onMounted(async () => {
 });
 
 watch(() => route.query.year?.toString(), getActivities, { immediate: true });
-
 </script>
